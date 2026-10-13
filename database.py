@@ -4,12 +4,13 @@ from contextlib import closing
 from datetime import date
 from pathlib import Path
 import sqlite3
+from typing import List, Optional, Union
 
 
 class DatabaseManager:
     """Manage SQLite connections and BiblioTK data operations."""
 
-    def __init__(self, db_path: str | Path = "bibliotk.db") -> None:
+    def __init__(self, db_path: Union[str, Path] = "bibliotk.db") -> None:
         """Initialize the database manager and create the schema if needed.
 
         Args:
@@ -73,7 +74,7 @@ class DatabaseManager:
                 )
                 return cursor.lastrowid
 
-    def get_book(self, book_id: int) -> sqlite3.Row | None:
+    def get_book(self, book_id: int) -> Optional[sqlite3.Row]:
         """Get a book by ID.
 
         Args:
@@ -88,7 +89,7 @@ class DatabaseManager:
                 (book_id,),
             ).fetchone()
 
-    def get_all_books(self) -> list[sqlite3.Row]:
+    def get_all_books(self) -> List[sqlite3.Row]:
         """Get all books ordered by title.
 
         Returns:
@@ -99,7 +100,7 @@ class DatabaseManager:
                 "SELECT * FROM livres ORDER BY titre, id"
             ).fetchall()
 
-    def search_books(self, search_term: str) -> list[sqlite3.Row]:
+    def search_books(self, search_term: str) -> List[sqlite3.Row]:
         """Search books by title, author, or ISBN.
 
         Args:
@@ -122,12 +123,12 @@ class DatabaseManager:
     def update_book(
         self,
         book_id: int,
-        titre: str | None = None,
-        auteur: str | None = None,
-        annee: int | None = None,
-        isbn: str | None = None,
-        exemplaires_total: int | None = None,
-        exemplaires_dispo: int | None = None,
+        titre: Optional[str] = None,
+        auteur: Optional[str] = None,
+        annee: Optional[int] = None,
+        isbn: Optional[str] = None,
+        exemplaires_total: Optional[int] = None,
+        exemplaires_dispo: Optional[int] = None,
     ) -> bool:
         """Update the supplied fields for a book.
 
@@ -249,7 +250,7 @@ class DatabaseManager:
                 )
                 return cursor.lastrowid
 
-    def get_all_readers(self) -> list[sqlite3.Row]:
+    def get_all_readers(self) -> List[sqlite3.Row]:
         """Get all readers ordered by family and given name.
 
         Returns:
@@ -311,7 +312,7 @@ class DatabaseManager:
     def return_book(
         self,
         emprunt_id: int,
-        date_retour_reelle: str | None = None,
+        date_retour_reelle: Optional[str] = None,
     ) -> bool:
         """Record a loan return and increment the book's available copies.
 
@@ -367,7 +368,7 @@ class DatabaseManager:
                 )
                 return True
 
-    def get_active_loans(self) -> list[sqlite3.Row]:
+    def get_active_loans(self) -> List[sqlite3.Row]:
         """Get active loans joined with their books and readers.
 
         Returns:
@@ -399,8 +400,8 @@ class DatabaseManager:
 
     def get_overdue_loans(
         self,
-        as_of: str | date | None = None,
-    ) -> list[sqlite3.Row]:
+        as_of: Optional[Union[str, date]] = None,
+    ) -> List[sqlite3.Row]:
         """Get active loans whose due date has passed.
 
         Args:
