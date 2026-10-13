@@ -10,12 +10,57 @@ Points forts : 3 tables avec CREATE TABLE IF NOT EXISTS ; UNIQUE sur isbn ; CHEC
 Points faibles : la colonne annee était facultative (NULL accepté), alors que le point de validation impose NOT NULL partout sauf date_retour_reelle. Ajouts non demandés : email UNIQUE avec un CHECK minimal, CHECK sur les dates, PRAGMA foreign_keys dans schema.sql.
 
 ### Modifications humaines apportées
-1. schema.sql : annee passée en NOT NULL (CHECK annee BETWEEN 0 AND 2100 conservé) ; docs/schema.md mis à jour.
-2. Revérifié : une année NULL est désormais refusée (NOT NULL constraint failed).
+Aucune
 
 ### Métriques
 Temps avec IA : 2 min | Temps correction : 2 min | Gain estimé : 80 % (4 min au lieu des 20 min prévues)
 
 ---
 ## Sprint A2 — dev-acces-donnees
-...
+### Prompt utilisé
+Génère database.py avec la classe DatabaseManager en te basant sur schema.sql (fichier ouvert).
+Constructeur : DatabaseManager(db_path="bibliotk.db")
+Méthodes requises :
+LIVRES : add_book, get_book (par id), get_all_books, search_books, update_book, delete_book
+LECTEURS : add_reader, get_all_readers
+EMPRUNTS : borrow_book (insère + décrémente dispo), return_book (met à jour + incrémente),
+get_active_loans (JOIN livres + lecteurs), get_overdue_loans
+Règles absolues : row_factory = sqlite3.Row, PRAGMA foreign_keys = ON,
+requêtes (?, ?), context manager with conn:
+
+### Évaluation de la réponse : 5/5
+Code correct. Pas de problème de sécurité identifié
+
+### Modifications humaines apportées
+Aucune
+
+
+## Sprint A3 — dev-logique-metier
+### Prompt utilisé
+Génère library.py avec la classe LibraryService(db_manager).
+Exceptions : class LoanError(Exception) pour les erreurs métier.
+Validations (@staticmethod) :
+_validate_isbn : 10 ou 13 chiffres (tirets/espaces acceptés, normalisés)
+_validate_year : entier entre 1000 et année courante
+_validate_email : contient '@' et '.' après le @
+Méthodes métier :
+add_book_to_catalog(titre, auteur, annee, isbn, nb_exemplaires=1) -> int
+   (ValueError si titre ou auteur vide, nb_exemplaires < 1, isbn ou année invalide)
+borrow_book(livre_id, lecteur_id) -> lève LoanError si le livre est inexistant ou indisponible
+return_book(emprunt_id)
+search_books(query) -> db.get_all_books() si query vide, sinon db.search_books(query)
+add_reader(nom, prenom, email) -> int
+Méthodes de passage (la GUI ne doit jamais appeler DatabaseManager) :
+get_all_books, delete_book, get_all_readers, get_active_loans, get_overdue_loans
+Contrainte : zéro import externe, seulement re, datetime et database local.
+
+### Évaluation de la réponse : 4.5/5
+Instructions suivies correctement.
+Tous les points de validation sont corrects.
+Probablement un peu de code imparfait
+
+### Modifications humaines apportées
+Aucune
+
+### Métriques
+Temps exécution IA : 1 min
