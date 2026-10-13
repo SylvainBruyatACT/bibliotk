@@ -64,3 +64,37 @@ Aucune
 
 ### Métriques
 Temps exécution IA : 1 min
+
+
+## Sprint A4 — dev-interface-tkinter
+
+### Prompt utilisé
+Génère gui.py avec la classe BiblioApp(tk.Tk) qui utilise LibraryService (voir library.py ouvert).
+
+Structure : fenêtre 960x640, ttk.Notebook avec 3 onglets.
+
+Onglet Livres : ttk.LabelFrame formulaire (Titre/Auteur/Année/ISBN/Exemplaires) +
+
+   boutons Ajouter et Supprimer + barre de recherche avec trace_add + ttk.Treeview
+
+   avec colonnes (ID/Titre/Auteur/Année/ISBN/Dispo-Total) + ttk.Scrollbar.
+
+Onglet Emprunts : formulaire (Livre ID / Lecteur ID) + boutons Emprunter / Retourner +
+
+   Treeview avec tag overdue (foreground rouge, bold) + Scrollbar.
+
+Onglet Lecteurs : formulaire (Nom/Prénom/Email) + bouton Ajouter + Treeview + Scrollbar.
+
+Méthodes refresh_books, refresh_loans, refresh_readers, refresh_all.
+
+### Évaluation de la réponse : 5/5
+Rien à redire
+
+### Modifications humaines apportées
+Aucune
+
+### Métriques
+Temps avec IA : 1 min | Temps correction : 3 min | 
+Pas testable sans installer python3-tk
+
+---
