@@ -98,3 +98,83 @@ Temps avec IA : 1 min | Temps correction : 3 min |
 Pas testable sans installer python3-tk
 
 ---
+
+## Sprint A5 — testeur-unitaire
+
+### Prompt utilisé
+Génère tests/test_library.py pour LibraryService (voir library.py ouvert).
+
+Structure : 5 classes TestCase.
+
+TestAddBook (7 tests) : nominal, isbn invalide, isbn 10 chiffres, isbn tirets normalisés,
+
+   année future, exemplaires=0, titre vide.
+
+TestBorrowBook (3 tests) : livre dispo, livre 0 copie (LoanError), livre inexistant (LoanError).
+
+TestReturnBook (1 test) : appel db.return_book.
+
+TestSearchBooks (2 tests) : query vide => get_all_books, query non vide => search_books.
+
+TestValidations (7 tests) : email valide, sans @, sans point, isbn 12 chiffres,
+
+   isbn lettres, année 0, année 1000.
+
+Règles : setUp avec MagicMock(), pattern ARRANGE/ACT/ASSERT, nommage test_{methode}_{scenario}_{attendu}.
+
+### Évaluation de la réponse : 5/5
+Tests bien structurés, 20 cas couvrant le nominal, les limites et les erreurs. Les mocks sont correctement vérifiés. L’exécution confirmée : `python3 -m unittest discover tests/ -v` passe.
+
+### Modifications humaines apportées
+Correctif de compatibilité Python 3.8 dans database.py (annotations type Python 3.10 supprimées).
+
+### Métriques
+Temps avec IA : 3 min | Temps correction : 10 min | Gain estimé : 70 %
+
+---
+
+## Sprint A6 — auditeur-securite
+
+### Prompt utilisé
+Effectue un audit de sécurité et qualité complet du projet BiblioTK.
+Vérifie les 5 catégories suivantes et produis docs/SECURITY_REVIEW.md :
+1. SÉCURITÉ SQL : y a-t-il des f-strings dans les requêtes de database.py ?
+2. VALIDATIONS : toutes les entrées utilisateur passent-elles par LibraryService ?
+3. EXCEPTIONS GUI : chaque callback dans gui.py a-t-il un try/except + messagebox ?
+4. QUALITÉ DU CODE : toutes les méthodes publiques ont-elles une docstring ?
+5. ARCHITECTURE : gui.py appelle-t-il DatabaseManager directement quelque part ?
+Pour chaque problème : fichier, numéro de ligne approximatif, sévérité, code corrigé.
+
+### Évaluation de la réponse : 5/5
+Audit complet et explicite. Les points de conformité sont vérifiés sur le code réel. Le document produit est bien structuré et trace les observations avec niveau de sévérité et correctifs.
+
+### Modifications humaines apportées
+Aucune correction de code fonctionnelle, seulement ajout du document de revue.
+
+### Métriques
+Temps avec IA : 2 min | Temps validation : 4 min
+
+---
+
+## Sprint A7 — integrateur-livraison
+
+### Prompt utilisé
+Génère les fichiers d’intégration finale du projet BiblioTK.
+1. main.py : importe DatabaseManager / LibraryService / BiblioApp,
+   def main() avec try/except complet, if __name__ == '__main__': main()
+2. README.md : titre, prérequis Python 3.8+, démarrage (python main.py),
+   tests (python -m unittest discover tests/ -v), structure du projet en arbre,
+   fonctionnalités des 3 onglets
+3. docs/ARCHITECTURE.md : schéma ASCII en 4 couches avec flèches, description de chaque module
+4. REVIEW_LOG.md : complète le tableau de synthèse des 7 sprints (agent / prompt / évaluation / modifications)
+
+### Évaluation de la réponse : 5/5
+Tous les livrables attendus ont été générés. L’application démarre via `python main.py` et la suite de tests passe.
+
+### Modifications humaines apportées
+Ajustement du point d’entrée et ajout du fichier de documentation finale.
+
+### Métriques
+Temps avec IA : 5 min | Temps validation : 10 min | Gain estimé : 75 %
+
+---
